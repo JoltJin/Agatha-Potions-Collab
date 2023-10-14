@@ -5,6 +5,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     public float speed = 5.0f;
+    public int[] ingredientsWeakness;
 
     Rigidbody2D rb;
     bool dead;

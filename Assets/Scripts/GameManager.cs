@@ -69,6 +69,7 @@ public class GameManager : MonoBehaviour
             SpriteRenderer renderer = enemy.GetComponent<SpriteRenderer>();
             renderer.sprite = enemies[levelEnemyIds[i]].sprite;
             renderer.color = enemies[levelEnemyIds[i]].color;
+            enemy.GetComponent<Enemy>().ingredientsWeakness = enemies[levelEnemyIds[i]].weaknessPotionIngredients;
 
             position.x += 2.0f; //distance between enemies
         }
@@ -147,7 +148,28 @@ public class GameManager : MonoBehaviour
             float distance = Vector3.Distance(enemyScreenPos, potion.transform.position);
             if(distance < 0.5)
             {
-                Destroy(leftMost.gameObject);
+                //this can probably be simplified but it's ok
+                bool hit = true;
+                foreach(int ingredient in selectedIngredients)
+                {
+                    bool inWeakness = false;
+                    foreach (int weakness in leftMost.ingredientsWeakness)
+                    {
+                        if(weakness == ingredient)
+                        {
+                            inWeakness = true;
+                        }
+                    }
+                    if (!inWeakness)
+                    {
+                        hit = false;
+                        break;
+                    }
+                }
+                if (hit)
+                {
+                    Destroy(leftMost.gameObject);
+                }
                 Destroy(potion);
                 break;
             }
