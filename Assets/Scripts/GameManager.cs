@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -40,12 +41,17 @@ public class GameManager : MonoBehaviour
     public int[] levelIngredientIds;
     public GameObject enemyPrefab;
     public RawImage[] ingredientImages;
+    public RawImage[] selectedIngredientImages;
+    public GameObject potionPrefab;
 
     int[] selectedIngredients = {-1, -1, -1}; //-1 = not selected yet
     short selectedCount = 0;
+    bool attacking;
+    Canvas canvas;
 
     private void Start()
     {
+        canvas = FindObjectOfType<Canvas>();
         //set ingredients
         for(int i = 0; i < ingredientImages.Length; i++)
         {
@@ -80,15 +86,86 @@ public class GameManager : MonoBehaviour
     
     public void ClickedIngredient(int id, Vector3 position) //todo use position for animating the ingredient drag to the cauldron
     {
+        if (attacking) return;
+
         selectedIngredients[selectedCount] = id;
+        selectedIngredientImages[selectedCount].texture = ingredients[id].texture;
+        selectedIngredientImages[selectedCount].color = ingredients[id].color;
         selectedCount++;
         if(selectedCount >= 3)
         {
             print("Created potion with ids " + selectedIngredients[0] + ", " + selectedIngredients[1] + ", " + selectedIngredients[2]);
-            selectedIngredients[0] = -1;
-            selectedIngredients[1] = -1;
-            selectedIngredients[2] = -1;
-            selectedCount = 0;
+            StartCoroutine(CraftAndThrow());
+            attacking = true;
         }
+    }
+
+    IEnumerator CraftAndThrow()
+    {
+        Vector3[] ogpos = { selectedIngredientImages[0].transform.position, selectedIngredientImages[1].transform.position, selectedIngredientImages[2].transform.position };
+        //wait a bit, maybe add a camera effect or something
+        yield return new WaitForSeconds(0.5f);
+        //move selected ingredients images in cauldron
+        Vector3 cauldronPos = new Vector3(420, 125, 0);
+        while (Vector3.Distance(selectedIngredientImages[0].transform.position, cauldronPos) > 0.5 &&
+            Vector3.Distance(selectedIngredientImages[1].transform.position, cauldronPos) > 0.5 &&
+            Vector3.Distance(selectedIngredientImages[2].transform.position, cauldronPos) > 0.5)
+        {
+            foreach(RawImage img in selectedIngredientImages)
+            {
+                img.transform.position += (cauldronPos - img.transform.position).normalized * 2.0f; //speed
+            }
+            yield return new WaitForSeconds(0.01f);
+        }
+        //then remove them
+        foreach (RawImage img in selectedIngredientImages)
+        {
+            img.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+        }
+        //then spawn a potion with it, todo: potion
+        GameObject potion = Instantiate(potionPrefab, canvas.transform);
+        potion.transform.position = cauldronPos;
+        //then move that potion to the leftmost enemy
+        Enemy[] enemies = FindObjectsOfType<Enemy>();
+        Enemy leftMost = enemies[0];
+        foreach(Enemy e in enemies)
+        {
+            if(e.transform.position.x < leftMost.transform.position.x)
+            {
+                leftMost = e;
+            }
+        }
+        while (true) //cursed but should break out of it when reached
+        {
+            if (leftMost.IsDestroyed())
+            {
+                Destroy(potion);
+                break; //if enemy reached agatha while potion is being thrown and is not longer valid
+            }
+            //we have to use WorldToScreenPoint because enemies are sprites in world and the rest are images on canvas... maybe we should make them all the same thing
+            Vector3 enemyScreenPos = Camera.main.WorldToScreenPoint(leftMost.transform.position);
+            float distance = Vector3.Distance(enemyScreenPos, potion.transform.position);
+            if(distance < 0.5)
+            {
+                Destroy(leftMost.gameObject);
+                Destroy(potion);
+                break;
+            }
+            else
+            {
+                potion.transform.position += (enemyScreenPos - potion.transform.position).normalized * 3.0f; //speed
+                yield return new WaitForSeconds(0.01f);
+            }
+        }
+
+        for(int i = 0; i < 3; i++)
+        {
+            selectedIngredientImages[i].transform.position = ogpos[i];
+        }
+        selectedIngredients[0] = -1;
+        selectedIngredients[1] = -1;
+        selectedIngredients[2] = -1;
+        selectedCount = 0;
+        attacking = false;
     }
 }
