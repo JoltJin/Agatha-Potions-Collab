@@ -43,11 +43,13 @@ public class GameManager : MonoBehaviour
     public RawImage[] ingredientImages;
     public RawImage[] selectedIngredientImages;
     public GameObject potionPrefab;
+    public RawImage[] bubbleImages;
 
     int[] selectedIngredients = {-1, -1, -1}; //-1 = not selected yet
     short selectedCount = 0;
     bool attacking;
     Canvas canvas;
+    int enemiesDefeated;
 
     private void Start()
     {
@@ -72,6 +74,27 @@ public class GameManager : MonoBehaviour
             enemy.GetComponent<Enemy>().ingredientsWeakness = enemies[levelEnemyIds[i]].weaknessPotionIngredients;
 
             position.x += 2.0f; //distance between enemies
+        }
+        UpdateBubble();
+    }
+
+    public void enemyDefeated() { 
+        enemiesDefeated++;
+        if (enemiesDefeated >= levelEnemyIds.Length)
+        {
+            print("LEVEL CLEARED");
+            return;
+        }
+        UpdateBubble();
+    }
+
+    void UpdateBubble()
+    {
+        EnemySpawnInfo leftmost = enemies[levelEnemyIds[enemiesDefeated]];
+        for(int i = 0; i < 3; i++)
+        {
+            bubbleImages[i].texture = ingredients[leftmost.weaknessPotionIngredients[i]].texture;
+            bubbleImages[i].color = ingredients[leftmost.weaknessPotionIngredients[i]].color;
         }
     }
 

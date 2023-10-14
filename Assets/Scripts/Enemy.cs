@@ -28,4 +28,9 @@ public class Enemy : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    private void OnDestroy()
+    {
+        GameManager.instance.enemyDefeated();
+    }
 }
