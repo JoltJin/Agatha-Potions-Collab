@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 [Serializable]
 public struct IngredientInfo
@@ -19,6 +21,7 @@ public struct EnemySpawnInfo
     public Sprite sprite;
     public Color color;
     public int[] weaknessPotionIngredients;
+    public Sprite[] walkAnim, dieAnim;
 }
 
 public class GameManager : MonoBehaviour
@@ -34,7 +37,7 @@ public class GameManager : MonoBehaviour
         instance = this;
     }
 
-    public int agathaHealth = 10;
+    public bool infiniteRandomMode;
     public EnemySpawnInfo[] enemies; //store enemy templates in here, their array index is their id to use in things like levelEnemyIds
     public int[] levelEnemyIds;
     public IngredientInfo[] ingredients; //^^ same thing but for ingredients
@@ -44,12 +47,15 @@ public class GameManager : MonoBehaviour
     public RawImage[] selectedIngredientImages;
     public GameObject potionPrefab;
     public RawImage[] bubbleImages;
+    public Image[] healthCandies;
+    public Sprite missingHealthImg;
 
+    int agathaHealth = 6;
     int[] selectedIngredients = {-1, -1, -1}; //-1 = not selected yet
     short selectedCount = 0;
     bool attacking;
     Canvas canvas;
-    int enemiesDefeated;
+    Queue<GameObject> spawnedEnemies = new Queue<GameObject>();
 
     private void Start()
     {
@@ -62,50 +68,92 @@ public class GameManager : MonoBehaviour
             ingredientImages[i].gameObject.GetComponent<Ingredient>().id = levelIngredientIds[i];
         }
 
-        //spawn enemies
-        //could spawn them as the level unfolds if needed but for now just spawn them off-screen :sip:
-        Vector3 position = new Vector3(10.0f, 1.03f, 0.0f); //spawn pos for the first enemy
-        for(int i = 0; i < levelEnemyIds.Length; i++)
+        if (infiniteRandomMode)
         {
-            GameObject enemy = Instantiate(enemyPrefab, position, Quaternion.identity);
-            SpriteRenderer renderer = enemy.GetComponent<SpriteRenderer>();
-            renderer.sprite = enemies[levelEnemyIds[i]].sprite;
-            renderer.color = enemies[levelEnemyIds[i]].color;
-            enemy.GetComponent<Enemy>().ingredientsWeakness = enemies[levelEnemyIds[i]].weaknessPotionIngredients;
-
-            position.x += 2.0f; //distance between enemies
+            StartCoroutine(Infinite());
         }
-        UpdateBubble();
+        else
+        {
+            //spawn enemies
+            //could spawn them as the level unfolds if needed but for now just spawn them off-screen :sip:
+            Vector3 position = new Vector3(10.0f, 1.03f, 0.0f); //spawn pos for the first enemy
+            for (int i = 0; i < levelEnemyIds.Length; i++)
+            {
+                SpawnEnemy(levelEnemyIds[i]);
+                position.x += 3.0f; //distance between enemies
+            }
+        }
+        StartCoroutine(UpdateBubble());
     }
 
-    public void enemyDefeated() { 
-        enemiesDefeated++;
-        if (enemiesDefeated >= levelEnemyIds.Length)
-        {
-            print("LEVEL CLEARED");
-            return;
-        }
-        UpdateBubble();
-    }
-
-    void UpdateBubble()
+    void SpawnEnemy(int id)
     {
-        EnemySpawnInfo leftmost = enemies[levelEnemyIds[enemiesDefeated]];
+        GameObject enemy = Instantiate(enemyPrefab, new Vector3(10.0f, 1.03f, 0.0f), Quaternion.identity);
+        SpriteRenderer renderer = enemy.GetComponent<SpriteRenderer>();
+        renderer.sprite = enemies[id].sprite;
+        renderer.color = enemies[id].color;
+        Enemy e = enemy.GetComponent<Enemy>();
+        e.ingredientsWeakness = enemies[id].weaknessPotionIngredients;
+        e.walkAnim = enemies[id].walkAnim;
+        e.dieAnim = enemies[id].dieAnim;
+        spawnedEnemies.Enqueue(enemy);
+    }
+
+    void SpawnRandom()
+    {
+        int e = Random.Range(0, enemies.Length);
+        SpawnEnemy(e);
+    }
+
+    IEnumerator Infinite()
+    {
+        while (true)
+        {
+            if (agathaHealth <= 0)
+            {
+                break;
+            }
+            SpawnRandom();
+            yield return new WaitForSeconds(3.0f);
+        }
+    }
+
+    public void enemyDefeated() {
+        if (agathaHealth <= 0) return;
+        spawnedEnemies.Dequeue();
+        StartCoroutine(UpdateBubble());
+    }
+
+    IEnumerator UpdateBubble()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            bubbleImages[i].color = Color.clear;
+        }
+        yield return new WaitForSeconds(0.5f);
+        Enemy leftmost = spawnedEnemies.Peek().GetComponent<Enemy>();
         for(int i = 0; i < 3; i++)
         {
-            bubbleImages[i].texture = ingredients[leftmost.weaknessPotionIngredients[i]].texture;
-            bubbleImages[i].color = ingredients[leftmost.weaknessPotionIngredients[i]].color;
+            bubbleImages[i].texture = ingredients[leftmost.ingredientsWeakness[i]].texture;
+            bubbleImages[i].color = ingredients[leftmost.ingredientsWeakness[i]].color;
         }
     }
 
     public void DamageAgatha(int dmg)
     {
         agathaHealth -= dmg;
-        print("hp now " + agathaHealth);
         if (agathaHealth <= 0)
         {
             print("ded");
+            SceneManager.LoadScene(0);
+            return;
         }
+        for (int i = agathaHealth; i < 6; i++)
+        {
+            healthCandies[i].sprite = missingHealthImg;
+        }
+        print("hp now " + agathaHealth);
+        
     }
     
     public void ClickedIngredient(int id, Vector3 position) //todo use position for animating the ingredient drag to the cauldron
@@ -146,9 +194,15 @@ public class GameManager : MonoBehaviour
         {
             img.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
         }
-        //then spawn a potion with it, todo: potion
+        //then spawn a potion with it
         GameObject potion = Instantiate(potionPrefab, canvas.transform);
         potion.transform.position = cauldronPos;
+        //fly up
+        while (potion.transform.position.y < Screen.height * 1.3)
+        {
+            potion.transform.position += new Vector3(0.0f, 15.0f, 0.0f);
+            yield return new WaitForSeconds(0.01f);
+        }
         //then move that potion to the leftmost enemy
         Enemy[] enemies = FindObjectsOfType<Enemy>();
         Enemy leftMost = enemies[0];
@@ -169,7 +223,7 @@ public class GameManager : MonoBehaviour
             //we have to use WorldToScreenPoint because enemies are sprites in world and the rest are images on canvas... maybe we should make them all the same thing
             Vector3 enemyScreenPos = Camera.main.WorldToScreenPoint(leftMost.transform.position);
             float distance = Vector3.Distance(enemyScreenPos, potion.transform.position);
-            if(distance < 0.5)
+            if(distance < 2.0)
             {
                 //this can probably be simplified but it's ok
                 bool hit = true;
@@ -191,14 +245,14 @@ public class GameManager : MonoBehaviour
                 }
                 if (hit)
                 {
-                    Destroy(leftMost.gameObject);
+                    leftMost.Kill();
                 }
                 Destroy(potion);
                 break;
             }
             else
             {
-                potion.transform.position += (enemyScreenPos - potion.transform.position).normalized * 3.0f; //speed
+                potion.transform.position += (enemyScreenPos - potion.transform.position).normalized * 8.0f; //speed
                 yield return new WaitForSeconds(0.01f);
             }
         }
