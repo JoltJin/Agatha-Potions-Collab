@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
+using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -22,6 +24,14 @@ public struct EnemySpawnInfo
     public Color color;
     public int[] weaknessPotionIngredients;
     public Sprite[] walkAnim, dieAnim;
+}
+
+
+[Serializable]
+public struct PotionCombo
+{
+    public int[] PotionIngredients;
+    public Sprite sprite;
 }
 
 public class GameManager : MonoBehaviour
@@ -49,12 +59,14 @@ public class GameManager : MonoBehaviour
     public RawImage[] bubbleImages;
     public Image[] healthCandies;
     public Sprite missingHealthImg;
+    public PotionCombo[] potions;
 
     int agathaHealth = 6;
     int[] selectedIngredients = {-1, -1, -1}; //-1 = not selected yet
     short selectedCount = 0;
     bool attacking;
     Canvas canvas;
+    int wave = 0;
     Queue<GameObject> spawnedEnemies = new Queue<GameObject>();
 
     private void Start()
@@ -97,6 +109,10 @@ public class GameManager : MonoBehaviour
         e.walkAnim = enemies[id].walkAnim;
         e.dieAnim = enemies[id].dieAnim;
         spawnedEnemies.Enqueue(enemy);
+        if (spawnedEnemies.Count == 1)
+        {
+            StartCoroutine(UpdateBubble());
+        }
     }
 
     void SpawnRandom()
@@ -109,12 +125,22 @@ public class GameManager : MonoBehaviour
     {
         while (true)
         {
-            if (agathaHealth <= 0)
+            if (agathaHealth <= 0) break;
+            wave++;
+            print("Wave " + wave);
+            float enemyDelay = 6.0f - (wave / 3.0f);
+            if (enemyDelay < 3.0f)
+                enemyDelay = 3.0f;
+            for(int i = 0; i < wave; i++)
             {
-                break;
+                if (agathaHealth <= 0) break;
+                SpawnRandom();
+                yield return new WaitForSeconds(enemyDelay);
             }
-            SpawnRandom();
-            yield return new WaitForSeconds(3.0f);
+            float waveDelay = 6.0f - wave;
+            if (waveDelay < 3.0f)
+                waveDelay = 3.0f;
+            yield return new WaitForSeconds(waveDelay);
         }
     }
 
@@ -131,11 +157,14 @@ public class GameManager : MonoBehaviour
             bubbleImages[i].color = Color.clear;
         }
         yield return new WaitForSeconds(0.5f);
-        Enemy leftmost = spawnedEnemies.Peek().GetComponent<Enemy>();
-        for(int i = 0; i < 3; i++)
+        if(spawnedEnemies.Count > 0)
         {
-            bubbleImages[i].texture = ingredients[leftmost.ingredientsWeakness[i]].texture;
-            bubbleImages[i].color = ingredients[leftmost.ingredientsWeakness[i]].color;
+            Enemy leftmost = spawnedEnemies.Peek().GetComponent<Enemy>();
+            for (int i = 0; i < 3; i++)
+            {
+                bubbleImages[i].texture = ingredients[leftmost.ingredientsWeakness[i]].texture;
+                bubbleImages[i].color = ingredients[leftmost.ingredientsWeakness[i]].color;
+            }
         }
     }
 
@@ -196,6 +225,33 @@ public class GameManager : MonoBehaviour
         }
         //then spawn a potion with it
         GameObject potion = Instantiate(potionPrefab, canvas.transform);
+        Image potionimg = potion.GetComponent<Image>();
+        foreach(PotionCombo combo in potions)
+        {
+            bool combofound = true;
+            foreach (int ingredient in selectedIngredients)
+            {
+                bool inPotion = false;
+                foreach (int ing in combo.PotionIngredients)
+                {
+                    if (ing == ingredient)
+                    {
+                        inPotion = true;
+                        break;
+                    }
+                }
+                if (!inPotion)
+                {
+                    combofound = false;
+                    break;
+                }
+            }
+            if (combofound)
+            {
+                potionimg.sprite = combo.sprite;
+                break;
+            }
+        }
         potion.transform.position = cauldronPos;
         //fly up
         while (potion.transform.position.y < Screen.height * 1.3)
@@ -205,66 +261,82 @@ public class GameManager : MonoBehaviour
         }
         //then move that potion to the leftmost enemy
         Enemy[] enemies = FindObjectsOfType<Enemy>();
-        Enemy leftMost = enemies[0];
-        foreach(Enemy e in enemies)
+        if (enemies.Length <= 0)
         {
-            if(e.transform.position.x < leftMost.transform.position.x)
+            Destroy(potion);
+            for (int i = 0; i < 3; i++)
             {
-                leftMost = e;
+                selectedIngredientImages[i].transform.position = ogpos[i];
             }
+            selectedIngredients[0] = -1;
+            selectedIngredients[1] = -1;
+            selectedIngredients[2] = -1;
+            selectedCount = 0;
+            attacking = false;
         }
-        while (true) //cursed but should break out of it when reached
+        else
         {
-            if (leftMost.IsDestroyed())
+            Enemy leftMost = enemies[0];
+            foreach (Enemy e in enemies)
             {
-                Destroy(potion);
-                break; //if enemy reached agatha while potion is being thrown and is not longer valid
-            }
-            //we have to use WorldToScreenPoint because enemies are sprites in world and the rest are images on canvas... maybe we should make them all the same thing
-            Vector3 enemyScreenPos = Camera.main.WorldToScreenPoint(leftMost.transform.position);
-            float distance = Vector3.Distance(enemyScreenPos, potion.transform.position);
-            if(distance < 2.0)
-            {
-                //this can probably be simplified but it's ok
-                bool hit = true;
-                foreach(int ingredient in selectedIngredients)
+                if (e.transform.position.x < leftMost.transform.position.x)
                 {
-                    bool inWeakness = false;
-                    foreach (int weakness in leftMost.ingredientsWeakness)
+                    leftMost = e;
+                }
+            }
+            while (true) //cursed but should break out of it when reached
+            {
+                if (leftMost.IsDestroyed())
+                {
+                    Destroy(potion);
+                    break; //if enemy reached agatha while potion is being thrown and is not longer valid
+                }
+                //we have to use WorldToScreenPoint because enemies are sprites in world and the rest are images on canvas... maybe we should make them all the same thing
+                Vector3 enemyScreenPos = Camera.main.WorldToScreenPoint(leftMost.transform.position);
+                float distance = Vector3.Distance(enemyScreenPos, potion.transform.position);
+                if (distance < 2.0)
+                {
+                    //this can probably be simplified but it's ok
+                    bool hit = true;
+                    foreach (int ingredient in selectedIngredients)
                     {
-                        if(weakness == ingredient)
+                        bool inWeakness = false;
+                        foreach (int weakness in leftMost.ingredientsWeakness)
                         {
-                            inWeakness = true;
+                            if (weakness == ingredient)
+                            {
+                                inWeakness = true;
+                            }
+                        }
+                        if (!inWeakness)
+                        {
+                            hit = false;
+                            break;
                         }
                     }
-                    if (!inWeakness)
+                    if (hit)
                     {
-                        hit = false;
-                        break;
+                        leftMost.Kill();
                     }
+                    Destroy(potion);
+                    break;
                 }
-                if (hit)
+                else
                 {
-                    leftMost.Kill();
+                    potion.transform.position += (enemyScreenPos - potion.transform.position).normalized * 8.0f; //speed
+                    yield return new WaitForSeconds(0.01f);
                 }
-                Destroy(potion);
-                break;
             }
-            else
-            {
-                potion.transform.position += (enemyScreenPos - potion.transform.position).normalized * 8.0f; //speed
-                yield return new WaitForSeconds(0.01f);
-            }
-        }
 
-        for(int i = 0; i < 3; i++)
-        {
-            selectedIngredientImages[i].transform.position = ogpos[i];
+            for (int i = 0; i < 3; i++)
+            {
+                selectedIngredientImages[i].transform.position = ogpos[i];
+            }
+            selectedIngredients[0] = -1;
+            selectedIngredients[1] = -1;
+            selectedIngredients[2] = -1;
+            selectedCount = 0;
+            attacking = false;
         }
-        selectedIngredients[0] = -1;
-        selectedIngredients[1] = -1;
-        selectedIngredients[2] = -1;
-        selectedCount = 0;
-        attacking = false;
     }
 }

@@ -2031,6 +2031,11 @@ MonoBehaviour:
   - {fileID: 1924503027}
   - {fileID: 1780850086}
   missingHealthImg: {fileID: -186107174, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
+  potions:
+  - PotionIngredients: 000000000100000002000000
+    sprite: {fileID: -667981790, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
+  - PotionIngredients: 030000000400000005000000
+    sprite: {fileID: 1770598879, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
 --- !u!4 &1281463580
 Transform:
   m_ObjectHideFlags: 0
