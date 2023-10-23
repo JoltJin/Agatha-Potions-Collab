@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
+using TMPro;
 using Unity.Burst.CompilerServices;
+using Unity.Burst.Intrinsics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,7 +14,7 @@ using Random = UnityEngine.Random;
 [Serializable]
 public struct IngredientInfo
 {
-    public Texture2D texture;
+    public Sprite sprite;
     public Color color;
 }
 
@@ -53,13 +55,14 @@ public class GameManager : MonoBehaviour
     public IngredientInfo[] ingredients; //^^ same thing but for ingredients
     public int[] levelIngredientIds;
     public GameObject enemyPrefab;
-    public RawImage[] ingredientImages;
-    public RawImage[] selectedIngredientImages;
+    public Image[] ingredientImages;
+    public Image[] selectedIngredientImages;
     public GameObject potionPrefab;
-    public RawImage[] bubbleImages;
+    public Image[] bubbleImages;
     public Image[] healthCandies;
     public Sprite missingHealthImg;
     public PotionCombo[] potions;
+    public TextMeshProUGUI scoreTxt;
 
     int agathaHealth = 6;
     int[] selectedIngredients = {-1, -1, -1}; //-1 = not selected yet
@@ -68,14 +71,18 @@ public class GameManager : MonoBehaviour
     Canvas canvas;
     int wave = 0;
     Queue<GameObject> spawnedEnemies = new Queue<GameObject>();
+    int combo = 0;
+
+    public static double currentScore = 0.0;
 
     private void Start()
     {
+        currentScore = 0.0;
         canvas = FindObjectOfType<Canvas>();
         //set ingredients
         for(int i = 0; i < ingredientImages.Length; i++)
         {
-            ingredientImages[i].texture = ingredients[levelIngredientIds[i]].texture;
+            ingredientImages[i].sprite = ingredients[levelIngredientIds[i]].sprite;
             ingredientImages[i].color = ingredients[levelIngredientIds[i]].color;
             ingredientImages[i].gameObject.GetComponent<Ingredient>().id = levelIngredientIds[i];
         }
@@ -100,7 +107,7 @@ public class GameManager : MonoBehaviour
 
     void SpawnEnemy(int id)
     {
-        GameObject enemy = Instantiate(enemyPrefab, new Vector3(10.0f, 1.03f, 0.0f), Quaternion.identity);
+        GameObject enemy = Instantiate(enemyPrefab, new Vector3(11.0f, 1.03f, 0.0f), Quaternion.identity);
         SpriteRenderer renderer = enemy.GetComponent<SpriteRenderer>();
         renderer.sprite = enemies[id].sprite;
         renderer.color = enemies[id].color;
@@ -144,8 +151,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void UpdateScoreTxt()
+    {
+        scoreTxt.text = currentScore.ToString("F1") + "\nx" + combo.ToString();
+    }
+
     public void enemyDefeated() {
         if (agathaHealth <= 0) return;
+        
+        UpdateScoreTxt();
         spawnedEnemies.Dequeue();
         StartCoroutine(UpdateBubble());
     }
@@ -162,7 +176,7 @@ public class GameManager : MonoBehaviour
             Enemy leftmost = spawnedEnemies.Peek().GetComponent<Enemy>();
             for (int i = 0; i < 3; i++)
             {
-                bubbleImages[i].texture = ingredients[leftmost.ingredientsWeakness[i]].texture;
+                bubbleImages[i].sprite = ingredients[leftmost.ingredientsWeakness[i]].sprite;
                 bubbleImages[i].color = ingredients[leftmost.ingredientsWeakness[i]].color;
             }
         }
@@ -171,10 +185,11 @@ public class GameManager : MonoBehaviour
     public void DamageAgatha(int dmg)
     {
         agathaHealth -= dmg;
+        combo = 0;
         if (agathaHealth <= 0)
         {
             print("ded");
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene("Death");
             return;
         }
         for (int i = agathaHealth; i < 6; i++)
@@ -190,12 +205,12 @@ public class GameManager : MonoBehaviour
         if (attacking) return;
 
         selectedIngredients[selectedCount] = id;
-        selectedIngredientImages[selectedCount].texture = ingredients[id].texture;
+        selectedIngredientImages[selectedCount].sprite = ingredients[id].sprite;
         selectedIngredientImages[selectedCount].color = ingredients[id].color;
         selectedCount++;
         if(selectedCount >= 3)
         {
-            print("Created potion with ids " + selectedIngredients[0] + ", " + selectedIngredients[1] + ", " + selectedIngredients[2]);
+            //print("Created potion with ids " + selectedIngredients[0] + ", " + selectedIngredients[1] + ", " + selectedIngredients[2]);
             StartCoroutine(CraftAndThrow());
             attacking = true;
         }
@@ -207,48 +222,32 @@ public class GameManager : MonoBehaviour
         //wait a bit, maybe add a camera effect or something
         yield return new WaitForSeconds(0.5f);
         //move selected ingredients images in cauldron
-        Vector3 cauldronPos = new Vector3(420, 125, 0);
+        Vector3 cauldronPos = new Vector3(496, 100, 0);
         while (Vector3.Distance(selectedIngredientImages[0].transform.position, cauldronPos) > 0.5 &&
             Vector3.Distance(selectedIngredientImages[1].transform.position, cauldronPos) > 0.5 &&
             Vector3.Distance(selectedIngredientImages[2].transform.position, cauldronPos) > 0.5)
         {
-            foreach(RawImage img in selectedIngredientImages)
+            foreach(Image img in selectedIngredientImages)
             {
                 img.transform.position += (cauldronPos - img.transform.position).normalized * 2.0f; //speed
             }
             yield return new WaitForSeconds(0.01f);
         }
         //then remove them
-        foreach (RawImage img in selectedIngredientImages)
+        foreach (Image img in selectedIngredientImages)
         {
             img.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
         }
         //then spawn a potion with it
         GameObject potion = Instantiate(potionPrefab, canvas.transform);
         Image potionimg = potion.GetComponent<Image>();
-        foreach(PotionCombo combo in potions)
+        foreach(PotionCombo potionCombo in potions)
         {
-            bool combofound = true;
-            foreach (int ingredient in selectedIngredients)
+            if (selectedIngredients[0] == potionCombo.PotionIngredients[0] &&
+                selectedIngredients[1] == potionCombo.PotionIngredients[1] &&
+                selectedIngredients[2] == potionCombo.PotionIngredients[2])
             {
-                bool inPotion = false;
-                foreach (int ing in combo.PotionIngredients)
-                {
-                    if (ing == ingredient)
-                    {
-                        inPotion = true;
-                        break;
-                    }
-                }
-                if (!inPotion)
-                {
-                    combofound = false;
-                    break;
-                }
-            }
-            if (combofound)
-            {
-                potionimg.sprite = combo.sprite;
+                potionimg.sprite = potionCombo.sprite;
                 break;
             }
         }
@@ -296,27 +295,13 @@ public class GameManager : MonoBehaviour
                 float distance = Vector3.Distance(enemyScreenPos, potion.transform.position);
                 if (distance < 2.0)
                 {
-                    //this can probably be simplified but it's ok
-                    bool hit = true;
-                    foreach (int ingredient in selectedIngredients)
-                    {
-                        bool inWeakness = false;
-                        foreach (int weakness in leftMost.ingredientsWeakness)
-                        {
-                            if (weakness == ingredient)
-                            {
-                                inWeakness = true;
-                            }
-                        }
-                        if (!inWeakness)
-                        {
-                            hit = false;
-                            break;
-                        }
-                    }
-                    if (hit)
+                    if (selectedIngredients[0] == leftMost.ingredientsWeakness[0] &&
+                        selectedIngredients[1] == leftMost.ingredientsWeakness[1] &&
+                        selectedIngredients[2] == leftMost.ingredientsWeakness[2])
                     {
                         leftMost.Kill();
+                        combo++;
+                        currentScore += 10.0 * Math.Log10(combo + 1);
                     }
                     Destroy(potion);
                     break;

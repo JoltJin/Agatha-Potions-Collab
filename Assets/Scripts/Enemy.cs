@@ -7,6 +7,7 @@ public class Enemy : MonoBehaviour
     public float speed = 5.0f;
     public int[] ingredientsWeakness;
     public Sprite[] walkAnim, dieAnim;
+    public float deathPosX = -4.0f;
 
     Rigidbody2D rb;
     bool dead;
@@ -56,7 +57,7 @@ public class Enemy : MonoBehaviour
     {
         if(dead) return; //safety to prevent double damage if the destroy takes a bit of time
 
-        if(rb.position.x <= -3.5) //reached agatha
+        if(rb.position.x <= deathPosX) //reached agatha
         {
             GameManager.instance.DamageAgatha(1);
             dead = true;
