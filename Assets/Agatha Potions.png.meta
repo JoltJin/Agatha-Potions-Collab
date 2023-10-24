@@ -1870,6 +1870,174 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: Button Potion Blue
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 38
+        width: 64
+        height: 19
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 26, y: 0, z: 4, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4258618784e69349bc5d78309ab5499
+      internalID: -177765596
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Button Potion Red
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 38
+        width: 64
+        height: 19
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 26, y: 0, z: 4, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8616d49e745dafb4582c1e58505360e2
+      internalID: 1850679819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Falling 1
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 112
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4455a2d162db8e6418c56d85a5570b14
+      internalID: -711089547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Falling 2
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 112
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 82d016e6b59cc9945881fcf4df0fd193
+      internalID: -1883458697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Falling 3
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 112
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b9cad2db35ff3a34fa61017e1a3987a7
+      internalID: 2135011766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Falling 4
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 112
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9537f1d1abd1f7f41b6480dbd27439d1
+      internalID: -582839113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Falling 5
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 112
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ccd836ffe1f01094e93e954a60d617db
+      internalID: 289944562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Title Screen Base
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 0
+        width: 192
+        height: 108
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd317e33cb50ac04aa23785a8b8bec0d
+      internalID: 58814413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -1881,89 +2049,97 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Health Icon Empty: -186107174
-      Green Slime Walking 1: 231191739
-      Red Slime Dying 1: 749502472
+      Potion Yellow: 872949265
       Green Slime Dying 2: -460729375
       Thought Bubble: 1399896913
-      Yellow Slime Walking 2: -1013278079
-      Agatha Potions_29: -1520074171
-      Blue Slime Dying 4: -543232467
-      Blue Slime Dying 1: -1362938752
-      Potion Green: 1770598879
       Bark: -264455433
       Feather: -1324889493
-      Dew: -105246850
       Blue Slime Dying 2: 950610450
-      Red Slime Walking 4: -1559993657
-      Blue Slime Walking 3: -1729836130
-      Ice Spike: -878146265
       Purple Slime Walking 4: -1736609749
       Purple Slime Walking 2: 816545646
       Yellow Slime Walking 1: 2080439562
-      Light_Blue Slime Walking 3: 582521390
-      Red Slime Walking 2: -537339528
       Purple Slime Dying 1: -1250981118
-      Yellow Slime Dying 2: 1035090012
       Purple Slime Dying 3: 85342662
-      Potion Empty: 904958227
       Red Slime Dying 3: 875510415
       Blue Slime Walking 2: 508607633
       Pink Slime Dying 4: 2043623212
       Purple Slime Walking 3: -707680949
-      Light_Blue Slime Walking 1: -396053967
-      Agatha Potions_28: 1429564126
-      Agatha Portrait 1: 1859698106
       Sprout: 424092050
-      Potion Red: 1730956428
-      Light_Blue Slime Dying 1: 297489647
       Light_Blue Slime Dying 2: -2102735321
-      Yellow Slime Dying 1: -503952490
+      Title Screen Base: 58814413
+      Light_Blue Slime Dying 1: 297489647
       Blue Slime Dying 3: -1652430112
-      Pink Slime Walking: 755306623
-      Pink Slime Dying 1: -1920253766
-      Green Slime Dying 1: -1213070491
-      Blue Slime Walking 4: -953589508
       Pink Slime Dying 2: -223929278
-      Potion Purple: -451083623
       Green Slime Dying 3: -1896003023
-      Pink Slime Walking 1: 1966970023
+      Potion Purple: -451083623
       Light_Blue Slime Walking 2: -828019149
       Purple Slime Dying 4: -1881002142
-      Blue Slime Walking 1: 337570928
       Cauldron: -1697729558
       Red Slime Walking 1: 1165218550
       Morning Sun: 1118121806
-      Potion Light_Blue: 1378452190
       Light_Blue Slime Dying 3: -756584102
+      Pepper: 475472396
+      Green Slime Walking 3: -466819567
+      Potion Black: -1879963579
+      Pink Slime Dying 3: 1368240895
+      Beast Tooth: -2044328921
+      Potion Pink: -1128368051
+      Purple Slime Walking 1: -378962059
+      Red Slime Dying 4: 823520169
+      Potion Grey: -2073570453
+      Green Slime Walking 2: -1920240506
+      Pink Slime Walking 2: -824049445
+      Blue Slime Dying 4: -543232467
+      Potion Empty: 904958227
+      Green Slime Walking 1: 231191739
+      Red Slime Dying 1: 749502472
+      Agatha Potions_29: -1520074171
+      Blue Slime Dying 1: -1362938752
+      Potion Green: 1770598879
+      Dew: -105246850
+      Button Potion Blue: -177765596
+      Red Slime Walking 4: -1559993657
+      Blue Slime Walking 3: -1729836130
+      Ice Spike: -878146265
+      Falling 1: -711089547
+      Light_Blue Slime Walking 3: 582521390
+      Red Slime Walking 2: -537339528
+      Yellow Slime Dying 2: 1035090012
+      Falling 4: -582839113
+      Falling 5: 289944562
+      Light_Blue Slime Walking 1: -396053967
+      Agatha Potions_28: 1429564126
+      Agatha Portrait 1: 1859698106
+      Falling 2: -1883458697
+      Potion Red: 1730956428
+      Yellow Slime Dying 1: -503952490
+      Pink Slime Walking: 755306623
+      Falling 3: 2135011766
+      Pink Slime Dying 1: -1920253766
+      Green Slime Dying 1: -1213070491
+      Blue Slime Walking 4: -953589508
+      Pink Slime Walking 1: 1966970023
+      Blue Slime Walking 1: 337570928
+      Potion Light_Blue: 1378452190
       Mushroom: 30163554
       Purple Slime Dying 2: -316713674
-      Pepper: 475472396
+      Button Potion Red: 1850679819
       Green Slime Dying 4: 1654612709
       Potion Blue: -667981790
       Light_Blue Slime Walking 4: 601249113
-      Green Slime Walking 3: -466819567
       Yellow Slime Dying 4: -1536176668
-      Potion Black: -1879963579
       Light_Blue Slime Dying 4: -219978829
-      Pink Slime Dying 3: 1368240895
-      Beast Tooth: -2044328921
       Red Slime Walking 3: 460635418
       Red Slime Dying 2: 17124978
       Yellow Slime Walking 3: 634239070
-      Potion Pink: -1128368051
-      Purple Slime Walking 1: -378962059
       Green Slime Walking 4: 1866836643
       Pink Slime Walking 3: 529847031
-      Potion Grey: -2073570453
-      Red Slime Dying 4: 823520169
       Yellow Slime Dying 3: -1538406201
-      Green Slime Walking 2: -1920240506
       HealthBackground: -1414542107
       Health Icon Full: -258039318
-      Pink Slime Walking 2: -824049445
       Yellow Slime Walking 4: -80442725
-      Potion Yellow: 872949265
+      Yellow Slime Walking 2: -1013278079
+      Health Icon Empty: -186107174
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
