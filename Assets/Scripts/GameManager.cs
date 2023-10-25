@@ -72,6 +72,7 @@ public class GameManager : MonoBehaviour
     int wave = 0;
     Queue<GameObject> spawnedEnemies = new Queue<GameObject>();
     int combo = 0;
+    bool speedPotionOn = false;
 
     public static double currentScore = 0.0;
 
@@ -115,6 +116,10 @@ public class GameManager : MonoBehaviour
         e.ingredientsWeakness = enemies[id].weaknessPotionIngredients;
         e.walkAnim = enemies[id].walkAnim;
         e.dieAnim = enemies[id].dieAnim;
+        if (speedPotionOn)
+        {
+            e.speed *= 1.5f;
+        }
         spawnedEnemies.Enqueue(enemy);
         if (spawnedEnemies.Count == 1)
         {
@@ -142,12 +147,12 @@ public class GameManager : MonoBehaviour
             {
                 if (agathaHealth <= 0) break;
                 SpawnRandom();
-                yield return new WaitForSeconds(enemyDelay);
+                yield return new WaitForSeconds(speedPotionOn ? enemyDelay * 0.66f : enemyDelay);
             }
             float waveDelay = 6.0f - wave;
             if (waveDelay < 3.0f)
                 waveDelay = 3.0f;
-            yield return new WaitForSeconds(waveDelay);
+            yield return new WaitForSeconds(speedPotionOn ? waveDelay * 0.66f : waveDelay);
         }
     }
 
@@ -216,6 +221,28 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    IEnumerator ThrowSpeedPotion()
+    {
+        StopCoroutine("ThrowSpeedPotion");
+        print("Start speed potion");
+        speedPotionOn = true;
+        Color prevcolor = scoreTxt.color;
+        scoreTxt.color = new Color(0.0f,0.8f,1.0f);
+        Enemy[] enemies = FindObjectsOfType<Enemy>();
+        foreach(Enemy enemy in enemies)
+        {
+            enemy.speed *= 1.5f;
+        }
+        yield return new WaitForSeconds(30.0f);
+        speedPotionOn = false;
+        foreach (Enemy enemy in enemies)
+        {
+            enemy.speed /= 1.5f;
+        }
+        scoreTxt.color = prevcolor;
+        print("end speed potion");
+    }
+
     IEnumerator CraftAndThrow()
     {
         Vector3[] ogpos = { selectedIngredientImages[0].transform.position, selectedIngredientImages[1].transform.position, selectedIngredientImages[2].transform.position };
@@ -257,6 +284,11 @@ public class GameManager : MonoBehaviour
         {
             potion.transform.position += new Vector3(0.0f, 15.0f, 0.0f);
             yield return new WaitForSeconds(0.01f);
+        }
+        //speed potion
+        if (selectedIngredients[0] == 3 && selectedIngredients[1] == 7 && selectedIngredients[2] == 3)
+        {
+            StartCoroutine(ThrowSpeedPotion());
         }
         //then move that potion to the leftmost enemy
         Enemy[] enemies = FindObjectsOfType<Enemy>();
@@ -301,7 +333,7 @@ public class GameManager : MonoBehaviour
                     {
                         leftMost.Kill();
                         combo++;
-                        currentScore += 10.0 * Math.Log10(combo + 1);
+                        currentScore += 10.0 * Math.Log10(combo + 1) * (speedPotionOn ? 1.5f : 1.0f);
                     }
                     Destroy(potion);
                     break;
