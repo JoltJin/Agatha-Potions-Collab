@@ -108,7 +108,7 @@ public class GameManager : MonoBehaviour
 
     void SpawnEnemy(int id)
     {
-        GameObject enemy = Instantiate(enemyPrefab, new Vector3(11.0f, 1.03f, 0.0f), Quaternion.identity);
+        GameObject enemy = Instantiate(enemyPrefab, new Vector3(8.0f, 5.7f, 0.0f), Quaternion.identity);
         SpriteRenderer renderer = enemy.GetComponent<SpriteRenderer>();
         renderer.sprite = enemies[id].sprite;
         renderer.color = enemies[id].color;
