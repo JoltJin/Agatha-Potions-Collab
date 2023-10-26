@@ -25,7 +25,7 @@ public struct EnemySpawnInfo
     public Sprite sprite;
     public Color color;
     public int[] weaknessPotionIngredients;
-    public Sprite[] walkAnim, dieAnim;
+    public Sprite[] walkAnim, dieAnim, fallAnim, landAnim;
 }
 
 
@@ -49,7 +49,6 @@ public class GameManager : MonoBehaviour
         instance = this;
     }
 
-    public bool infiniteRandomMode;
     public EnemySpawnInfo[] enemies; //store enemy templates in here, their array index is their id to use in things like levelEnemyIds
     public int[] levelEnemyIds;
     public IngredientInfo[] ingredients; //^^ same thing but for ingredients
@@ -63,6 +62,7 @@ public class GameManager : MonoBehaviour
     public Sprite missingHealthImg;
     public PotionCombo[] potions;
     public TextMeshProUGUI scoreTxt;
+    public Transform cauldronMixPoint;
 
     int agathaHealth = 6;
     int[] selectedIngredients = {-1, -1, -1}; //-1 = not selected yet
@@ -73,8 +73,12 @@ public class GameManager : MonoBehaviour
     Queue<GameObject> spawnedEnemies = new Queue<GameObject>();
     int combo = 0;
     bool speedPotionOn = false;
+    bool storyDoneSpawn = false;
 
+    public static bool infiniteRandomMode;
     public static double currentScore = 0.0;
+    public static EndInfo endInfo;
+    public static int storyWave = 1;
 
     private void Start()
     {
@@ -94,16 +98,10 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            //spawn enemies
-            //could spawn them as the level unfolds if needed but for now just spawn them off-screen :sip:
-            Vector3 position = new Vector3(10.0f, 1.03f, 0.0f); //spawn pos for the first enemy
-            for (int i = 0; i < levelEnemyIds.Length; i++)
-            {
-                SpawnEnemy(levelEnemyIds[i]);
-                position.x += 3.0f; //distance between enemies
-            }
+            StartCoroutine(Story());
         }
         StartCoroutine(UpdateBubble());
+        UpdateScoreTxt();
     }
 
     void SpawnEnemy(int id)
@@ -116,6 +114,8 @@ public class GameManager : MonoBehaviour
         e.ingredientsWeakness = enemies[id].weaknessPotionIngredients;
         e.walkAnim = enemies[id].walkAnim;
         e.dieAnim = enemies[id].dieAnim;
+        e.fallAnim = enemies[id].fallAnim;
+        e.landAnim = enemies[id].landAnim;
         if (speedPotionOn)
         {
             e.speed *= 1.5f;
@@ -131,6 +131,20 @@ public class GameManager : MonoBehaviour
     {
         int e = Random.Range(0, enemies.Length);
         SpawnEnemy(e);
+    }
+
+    IEnumerator Story()
+    {
+        float enemyDelay = 6.0f - (storyWave / 3.0f);
+        if (enemyDelay < 3.0f)
+            enemyDelay = 3.0f;
+        for (int i = 0; i < storyWave; i++)
+        {
+            yield return new WaitForSeconds(speedPotionOn ? enemyDelay * 0.66f : enemyDelay);
+            if (agathaHealth <= 0) break;
+            SpawnRandom();
+        }
+        storyDoneSpawn = true;
     }
 
     IEnumerator Infinite()
@@ -167,6 +181,13 @@ public class GameManager : MonoBehaviour
         UpdateScoreTxt();
         spawnedEnemies.Dequeue();
         StartCoroutine(UpdateBubble());
+
+        if(storyDoneSpawn && !infiniteRandomMode && spawnedEnemies.Count == 0)
+        {
+            //cleared story level
+            SceneManager.LoadScene("Start");
+            storyWave++;
+        }
     }
 
     IEnumerator UpdateBubble()
@@ -194,6 +215,7 @@ public class GameManager : MonoBehaviour
         if (agathaHealth <= 0)
         {
             print("ded");
+            endInfo = new EndInfo(infiniteRandomMode, wave);
             SceneManager.LoadScene("Death");
             return;
         }
@@ -229,15 +251,20 @@ public class GameManager : MonoBehaviour
         Color prevcolor = scoreTxt.color;
         scoreTxt.color = new Color(0.0f,0.8f,1.0f);
         Enemy[] enemies = FindObjectsOfType<Enemy>();
-        foreach(Enemy enemy in enemies)
+        if(enemies.Length > 0)
         {
-            enemy.speed *= 1.5f;
-        }
-        yield return new WaitForSeconds(30.0f);
-        speedPotionOn = false;
-        foreach (Enemy enemy in enemies)
-        {
-            enemy.speed /= 1.5f;
+            float ogspeed = enemies[0].speed;
+            float newspeed = ogspeed * 1.5f;
+            foreach (Enemy enemy in enemies)
+            {
+                enemy.SetSpeed(newspeed);
+            }
+            yield return new WaitForSeconds(20.0f);
+            speedPotionOn = false;
+            foreach (Enemy enemy in enemies)
+            {
+                enemy.SetSpeed(ogspeed);
+            }
         }
         scoreTxt.color = prevcolor;
         print("end speed potion");
@@ -249,7 +276,7 @@ public class GameManager : MonoBehaviour
         //wait a bit, maybe add a camera effect or something
         yield return new WaitForSeconds(0.5f);
         //move selected ingredients images in cauldron
-        Vector3 cauldronPos = new Vector3(496, 100, 0);
+        Vector3 cauldronPos = cauldronMixPoint.position;
         while (Vector3.Distance(selectedIngredientImages[0].transform.position, cauldronPos) > 0.5 &&
             Vector3.Distance(selectedIngredientImages[1].transform.position, cauldronPos) > 0.5 &&
             Vector3.Distance(selectedIngredientImages[2].transform.position, cauldronPos) > 0.5)
@@ -325,7 +352,7 @@ public class GameManager : MonoBehaviour
                 //we have to use WorldToScreenPoint because enemies are sprites in world and the rest are images on canvas... maybe we should make them all the same thing
                 Vector3 enemyScreenPos = Camera.main.WorldToScreenPoint(leftMost.transform.position);
                 float distance = Vector3.Distance(enemyScreenPos, potion.transform.position);
-                if (distance < 2.0)
+                if (distance < 10.0)
                 {
                     if (selectedIngredients[0] == leftMost.ingredientsWeakness[0] &&
                         selectedIngredients[1] == leftMost.ingredientsWeakness[1] &&

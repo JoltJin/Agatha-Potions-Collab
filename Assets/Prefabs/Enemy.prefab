@@ -120,7 +120,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94657a8571b565245b1b30c860504fc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1.5
+  speed: 1
   ingredientsWeakness: 
   walkAnim: []
   dieAnim: []

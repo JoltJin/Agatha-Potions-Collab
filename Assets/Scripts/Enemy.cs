@@ -6,11 +6,11 @@ public class Enemy : MonoBehaviour
 {
     public float speed = 5.0f;
     public int[] ingredientsWeakness;
-    public Sprite[] walkAnim, dieAnim, fallAnim;
+    public Sprite[] walkAnim, dieAnim, fallAnim, landAnim;
     public float deathPosX = -4.0f;
 
     Rigidbody2D rb;
-    bool dead;
+    bool dead, fell;
     int animIndex;
     SpriteRenderer spriteRenderer;
 
@@ -18,9 +18,10 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        rb.velocity = Vector3.down * 3;
+        //rb.velocity = Vector3.down * 3;
         spriteRenderer = GetComponent<SpriteRenderer>();
         animIndex = 0;
+        fell = false;
         StartCoroutine(DoFallAnim());
     }
 
@@ -30,8 +31,26 @@ public class Enemy : MonoBehaviour
         {
             spriteRenderer.sprite = fallAnim[animIndex++];
             animIndex %= fallAnim.Length;
-            yield return new WaitForSeconds(0.15f);
+            for(int i = 0; i < 6; i++)
+            {
+                if (rb.position.y < 1.10f)
+                {
+                    rb.position -= new Vector2(0.0f, rb.position.y - 1.0f);
+                }
+                else
+                {
+                    rb.position -= new Vector2(0.0f, 0.10f);
+                }
+                yield return new WaitForSeconds(0.025f);
+            }
         }
+        spriteRenderer.sprite = landAnim[0];
+        yield return new WaitForSeconds(0.15f);
+        spriteRenderer.sprite = landAnim[1];
+        yield return new WaitForSeconds(0.15f);
+        spriteRenderer.sprite = landAnim[0];
+        yield return new WaitForSeconds(0.15f);
+        fell = true;
         rb.velocity = Vector3.left * speed;
         rb.position = new Vector2(rb.position.x, 1.0f);
         animIndex = 0;
@@ -57,6 +76,15 @@ public class Enemy : MonoBehaviour
             yield return new WaitForSeconds(0.15f);
         }
         Destroy(gameObject);
+    }
+
+    public void SetSpeed(float speed)
+    {
+        this.speed = speed;
+        if (fell && rb)
+        {
+            rb.velocity = Vector3.left * speed;
+        }
     }
 
     public void Kill()
