@@ -17,19 +17,21 @@ public struct EndInfo
 
 public class DeathScene : MonoBehaviour
 {
-    public TextMeshProUGUI scoreTxt, waveTxt;
+    public TextMeshProUGUI scoreTxt, waveTxt, highscoreTxt;
 
     // Start is called before the first frame update
     void Start()
     {
         scoreTxt.text = "Score: " + GameManager.currentScore.ToString("F1");
+        highscoreTxt.text = "High Score: " + GameManager.savedata.highScore.ToString("F1");
+
         if (GameManager.endInfo.infinite)
         {
             waveTxt.text = "Wave: " + GameManager.endInfo.wave.ToString();
         }
         else
         {
-            waveTxt.text = "Story: " + GameManager.storyWave.ToString();
+            waveTxt.text = "Story: " + GameManager.savedata.storyChapter.ToString();
         }
     }
 }

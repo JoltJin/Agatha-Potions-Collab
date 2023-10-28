@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
     public static bool infiniteRandomMode;
     public static double currentScore = 0.0;
     public static EndInfo endInfo;
-    public static int storyWave = 1;
+    public static SaveData savedata;
 
     private void Start()
     {
@@ -135,10 +135,10 @@ public class GameManager : MonoBehaviour
 
     IEnumerator Story()
     {
-        float enemyDelay = 6.0f - (storyWave / 3.0f);
+        float enemyDelay = 6.0f - (savedata.storyChapter / 3.0f);
         if (enemyDelay < 3.0f)
             enemyDelay = 3.0f;
-        for (int i = 0; i < storyWave; i++)
+        for (int i = 0; i < savedata.storyChapter; i++)
         {
             yield return new WaitForSeconds(speedPotionOn ? enemyDelay * 0.66f : enemyDelay);
             if (agathaHealth <= 0) break;
@@ -186,7 +186,8 @@ public class GameManager : MonoBehaviour
         {
             //cleared story level
             SceneManager.LoadScene("Start");
-            storyWave++;
+            savedata.storyChapter++;
+            SaveManager.SaveData();
         }
     }
 
@@ -216,6 +217,12 @@ public class GameManager : MonoBehaviour
         {
             print("ded");
             endInfo = new EndInfo(infiniteRandomMode, wave);
+            if (currentScore > savedata.highScore)
+            {
+                print("new highscore: " + currentScore);
+                savedata.highScore = (float)currentScore;
+                SaveManager.SaveData();
+            }
             SceneManager.LoadScene("Death");
             return;
         }
@@ -245,29 +252,33 @@ public class GameManager : MonoBehaviour
 
     IEnumerator ThrowSpeedPotion()
     {
-        StopCoroutine("ThrowSpeedPotion");
-        print("Start speed potion");
-        speedPotionOn = true;
-        Color prevcolor = scoreTxt.color;
-        scoreTxt.color = new Color(0.0f,0.8f,1.0f);
-        Enemy[] enemies = FindObjectsOfType<Enemy>();
-        if(enemies.Length > 0)
+        //StopCoroutine("ThrowSpeedPotion");
+        if (!speedPotionOn)
         {
-            float ogspeed = enemies[0].speed;
-            float newspeed = ogspeed * 1.5f;
-            foreach (Enemy enemy in enemies)
+            print("Start speed potion");
+            
+            Enemy[] enemies = FindObjectsOfType<Enemy>();
+            if (enemies.Length > 0)
             {
-                enemy.SetSpeed(newspeed);
+                speedPotionOn = true;
+                Color prevcolor = scoreTxt.color;
+                scoreTxt.color = new Color(0.0f, 0.8f, 1.0f);
+                float ogspeed = enemies[0].speed;
+                float newspeed = ogspeed * 1.5f;
+                foreach (Enemy enemy in enemies)
+                {
+                    enemy.SetSpeed(newspeed);
+                }
+                yield return new WaitForSeconds(20.0f);
+                speedPotionOn = false;
+                foreach (Enemy enemy in enemies)
+                {
+                    enemy.SetSpeed(ogspeed);
+                }
+                scoreTxt.color = prevcolor;
             }
-            yield return new WaitForSeconds(20.0f);
-            speedPotionOn = false;
-            foreach (Enemy enemy in enemies)
-            {
-                enemy.SetSpeed(ogspeed);
-            }
+            print("end speed potion");
         }
-        scoreTxt.color = prevcolor;
-        print("end speed potion");
     }
 
     IEnumerator CraftAndThrow()

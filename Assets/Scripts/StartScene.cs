@@ -10,7 +10,8 @@ public class StartScene : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        storyTxt.text = "Story Mode: Ch." + GameManager.storyWave;
+        SaveManager.LoadData();
+        storyTxt.text = "Story Mode: Ch." + GameManager.savedata.storyChapter;
     }
 
     public void ClickStory()
