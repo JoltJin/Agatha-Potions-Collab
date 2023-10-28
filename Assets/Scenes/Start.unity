@@ -1077,7 +1077,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 449059719}
         m_TargetAssemblyTypeName: StartScene, Assembly-CSharp
-        m_MethodName: ClickStory
+        m_MethodName: ClickInfinite
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
