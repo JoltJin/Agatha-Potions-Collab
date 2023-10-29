@@ -2401,6 +2401,7 @@ MonoBehaviour:
     sprite: {fileID: 872949265, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
   scoreTxt: {fileID: 1550900664}
   cauldronMixPoint: {fileID: 371395833}
+  canvas: {fileID: 1589847272}
 --- !u!4 &1281463580
 Transform:
   m_ObjectHideFlags: 0

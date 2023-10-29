@@ -63,12 +63,12 @@ public class GameManager : MonoBehaviour
     public PotionCombo[] potions;
     public TextMeshProUGUI scoreTxt;
     public Transform cauldronMixPoint;
+    public Canvas canvas;
 
     int agathaHealth = 6;
     int[] selectedIngredients = {-1, -1, -1}; //-1 = not selected yet
     short selectedCount = 0;
     bool attacking;
-    Canvas canvas;
     int wave = 0;
     Queue<GameObject> spawnedEnemies = new Queue<GameObject>();
     int combo = 0;
@@ -83,7 +83,6 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         currentScore = 0.0;
-        canvas = FindObjectOfType<Canvas>();
         //set ingredients
         for(int i = 0; i < ingredientImages.Length; i++)
         {
@@ -288,13 +287,13 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         //move selected ingredients images in cauldron
         Vector3 cauldronPos = cauldronMixPoint.position;
-        while (Vector3.Distance(selectedIngredientImages[0].transform.position, cauldronPos) > 0.5 &&
-            Vector3.Distance(selectedIngredientImages[1].transform.position, cauldronPos) > 0.5 &&
-            Vector3.Distance(selectedIngredientImages[2].transform.position, cauldronPos) > 0.5)
+        while (Vector3.Distance(selectedIngredientImages[0].transform.position, cauldronPos) > 0.2 &&
+            Vector3.Distance(selectedIngredientImages[1].transform.position, cauldronPos) > 0.2 &&
+            Vector3.Distance(selectedIngredientImages[2].transform.position, cauldronPos) > 0.2)
         {
             foreach(Image img in selectedIngredientImages)
             {
-                img.transform.position += (cauldronPos - img.transform.position).normalized * 2.0f; //speed
+                img.transform.position += (cauldronPos - img.transform.position).normalized * 0.03f; //speed
             }
             yield return new WaitForSeconds(0.01f);
         }
@@ -318,9 +317,11 @@ public class GameManager : MonoBehaviour
         }
         potion.transform.position = cauldronPos;
         //fly up
-        while (potion.transform.position.y < Screen.height * 1.3)
+        float speedy = 0.3f;
+        while (potion.transform.position.y < 6.5f && speedy > 0.0f)
         {
-            potion.transform.position += new Vector3(0.0f, 15.0f, 0.0f);
+            potion.transform.position += new Vector3(0.0f, speedy, 0.0f);
+            speedy -= 0.004f;
             yield return new WaitForSeconds(0.01f);
         }
         //speed potion
@@ -353,6 +354,7 @@ public class GameManager : MonoBehaviour
                     leftMost = e;
                 }
             }
+            float fallspeed = 0.15f;
             while (true) //cursed but should break out of it when reached
             {
                 if (leftMost.IsDestroyed())
@@ -360,10 +362,9 @@ public class GameManager : MonoBehaviour
                     Destroy(potion);
                     break; //if enemy reached agatha while potion is being thrown and is not longer valid
                 }
-                //we have to use WorldToScreenPoint because enemies are sprites in world and the rest are images on canvas... maybe we should make them all the same thing
-                Vector3 enemyScreenPos = Camera.main.WorldToScreenPoint(leftMost.transform.position);
+                Vector3 enemyScreenPos = (leftMost.transform.position);
                 float distance = Vector3.Distance(enemyScreenPos, potion.transform.position);
-                if (distance < 10.0)
+                if (distance < 1.0)
                 {
                     if (selectedIngredients[0] == leftMost.ingredientsWeakness[0] &&
                         selectedIngredients[1] == leftMost.ingredientsWeakness[1] &&
@@ -378,7 +379,8 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    potion.transform.position += (enemyScreenPos - potion.transform.position).normalized * 8.0f; //speed
+                    potion.transform.position += (enemyScreenPos - potion.transform.position).normalized * fallspeed;
+                    fallspeed += 0.005f;
                     yield return new WaitForSeconds(0.01f);
                 }
             }

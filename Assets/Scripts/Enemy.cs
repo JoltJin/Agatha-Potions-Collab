@@ -7,7 +7,7 @@ public class Enemy : MonoBehaviour
     public float speed = 5.0f;
     public int[] ingredientsWeakness;
     public Sprite[] walkAnim, dieAnim, fallAnim, landAnim;
-    public float deathPosX = -4.0f;
+    public float deathPosX = -4.0f, walkY = 0.5f, fallspeed = 0.1f;
 
     Rigidbody2D rb;
     bool dead, fell;
@@ -27,19 +27,19 @@ public class Enemy : MonoBehaviour
 
     IEnumerator DoFallAnim()
     {
-        while (!dead && rb.position.y > 1.0f)
+        while (!dead && rb.position.y > walkY)
         {
             spriteRenderer.sprite = fallAnim[animIndex++];
             animIndex %= fallAnim.Length;
             for(int i = 0; i < 6; i++)
             {
-                if (rb.position.y < 1.10f)
+                if (rb.position.y < walkY + fallspeed)
                 {
-                    rb.position -= new Vector2(0.0f, rb.position.y - 1.0f);
+                    rb.position -= new Vector2(0.0f, rb.position.y - walkY);
                 }
                 else
                 {
-                    rb.position -= new Vector2(0.0f, 0.10f);
+                    rb.position -= new Vector2(0.0f, fallspeed);
                 }
                 yield return new WaitForSeconds(0.025f);
             }
@@ -52,7 +52,7 @@ public class Enemy : MonoBehaviour
         yield return new WaitForSeconds(0.15f);
         fell = true;
         rb.velocity = Vector3.left * speed;
-        rb.position = new Vector2(rb.position.x, 1.0f);
+        rb.position = new Vector2(rb.position.x, walkY);
         animIndex = 0;
         StartCoroutine(DoWalkAnim());
     }

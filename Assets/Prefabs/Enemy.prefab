@@ -130,7 +130,10 @@ MonoBehaviour:
   - {fileID: 2135011766, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
   - {fileID: -582839113, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
   - {fileID: 289944562, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
+  landAnim: []
   deathPosX: -4
+  walkY: 0.5
+  fallspeed: 0.1
 --- !u!95 &6312819596712052560
 Animator:
   serializedVersion: 4
