@@ -2605,6 +2605,48 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: Cauldron Section
+      rect:
+        serializedVersion: 2
+        x: 793
+        y: 0
+        width: 126
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f570894c4c45b2d4a92209b6316091e7
+      internalID: -2071069074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Battle Background
+      rect:
+        serializedVersion: 2
+        x: 793
+        y: 51
+        width: 126
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1359b830c6e21664c9036930951ac0c6
+      internalID: 1346213780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -2616,7 +2658,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Health Icon Empty: -186107174
+      Potion Yellow: 872949265
       Green Slime Dying 2: -460729375
       Thought Bubble: 1399896913
       Green Slime Falling 1: -1847913459
@@ -2632,6 +2674,7 @@ TextureImporter:
       Purple Slime Dying 1: -1250981118
       Purple Slime Landing 2: -1278440000
       Purple Slime Dying 3: 85342662
+      Battle Background: 1346213780
       Red Slime Dying 3: 875510415
       Blue Slime Walking 2: 508607633
       Pink Slime Dying 4: 2043623212
@@ -2669,6 +2712,7 @@ TextureImporter:
       Potion Grey: -2073570453
       Green Slime Walking 2: -1920240506
       Pink Slime Walking 2: -824049445
+      Cauldron Section: -2071069074
       Blue Slime Dying 4: -543232467
       Potion Empty: 904958227
       Purple Slime Falling 1: -1182069481
@@ -2734,7 +2778,7 @@ TextureImporter:
       Health Icon Full: -258039318
       Yellow Slime Walking 4: -80442725
       Yellow Slime Walking 2: -1013278079
-      Potion Yellow: 872949265
+      Health Icon Empty: -186107174
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
