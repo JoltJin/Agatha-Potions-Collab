@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public struct EndInfo
 {
@@ -22,8 +23,8 @@ public class DeathScene : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        scoreTxt.text = "Score: " + GameManager.currentScore.ToString("F1");
-        highscoreTxt.text = "High Score: " + GameManager.savedata.highScore.ToString("F1");
+        scoreTxt.text = "Score: " + GameManager.currentScore.ToString("F0");
+        highscoreTxt.text = "High Score: " + GameManager.savedata.highScore.ToString("F0");
 
         if (GameManager.endInfo.infinite)
         {
@@ -33,5 +34,15 @@ public class DeathScene : MonoBehaviour
         {
             waveTxt.text = "Story: " + GameManager.savedata.storyChapter.ToString();
         }
+    }
+
+    public void ClickRetry()
+    {
+        SceneManager.LoadScene("Game");
+    }
+
+    public void ClickBack()
+    {
+        SceneManager.LoadScene("Start");
     }
 }

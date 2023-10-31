@@ -39,7 +39,7 @@ public class Enemy : MonoBehaviour
                 }
                 else
                 {
-                    rb.position -= new Vector2(0.0f, fallspeed);
+                    rb.position -= new Vector2(0.02f, fallspeed);
                 }
                 yield return new WaitForSeconds(0.025f);
             }

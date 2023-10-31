@@ -101,11 +101,56 @@ public class GameManager : MonoBehaviour
         }
         StartCoroutine(UpdateBubble());
         UpdateScoreTxt();
+
+        if (!infiniteRandomMode)
+        {
+            //could be made better but who cares :sunglasses:
+            if(savedata.storyChapter < 3)
+            {
+                agathaHealth = 1;
+                for (int i = agathaHealth; i < 6; i++)
+                {
+                    healthCandies[i].color = Color.clear;
+                }
+            }
+            else if (savedata.storyChapter < 5)
+            {
+                agathaHealth = 2;
+                for (int i = agathaHealth; i < 6; i++)
+                {
+                    healthCandies[i].color = Color.clear;
+                }
+            }
+            else if (savedata.storyChapter < 6)
+            {
+                agathaHealth = 3;
+                for (int i = agathaHealth; i < 6; i++)
+                {
+                    healthCandies[i].color = Color.clear;
+                }
+            }
+            else if (savedata.storyChapter < 7)
+            {
+                agathaHealth = 4;
+                for (int i = agathaHealth; i < 6; i++)
+                {
+                    healthCandies[i].color = Color.clear;
+                }
+            }
+            else if (savedata.storyChapter < 9)
+            {
+                agathaHealth = 5;
+                for (int i = agathaHealth; i < 6; i++)
+                {
+                    healthCandies[i].color = Color.clear;
+                }
+            }
+        }
     }
 
     void SpawnEnemy(int id)
     {
-        GameObject enemy = Instantiate(enemyPrefab, new Vector3(8.0f, 5.7f, 0.0f), Quaternion.identity);
+        GameObject enemy = Instantiate(enemyPrefab, new Vector3(8.6f, 5.7f, 0.0f), Quaternion.identity);
         SpriteRenderer renderer = enemy.GetComponent<SpriteRenderer>();
         renderer.sprite = enemies[id].sprite;
         renderer.color = enemies[id].color;
@@ -134,9 +179,9 @@ public class GameManager : MonoBehaviour
 
     IEnumerator Story()
     {
-        float enemyDelay = 6.0f - (savedata.storyChapter / 3.0f);
-        if (enemyDelay < 3.0f)
-            enemyDelay = 3.0f;
+        float enemyDelay = 6.0f - (savedata.storyChapter / 5.0f);
+        if (enemyDelay < 3.5f)
+            enemyDelay = 3.5f;
         for (int i = 0; i < savedata.storyChapter; i++)
         {
             yield return new WaitForSeconds(speedPotionOn ? enemyDelay * 0.66f : enemyDelay);
@@ -153,16 +198,16 @@ public class GameManager : MonoBehaviour
             if (agathaHealth <= 0) break;
             wave++;
             print("Wave " + wave);
-            float enemyDelay = 6.0f - (wave / 3.0f);
-            if (enemyDelay < 3.0f)
-                enemyDelay = 3.0f;
+            float enemyDelay = 6.0f - (wave / 5.0f);
+            if (enemyDelay < 3.5f)
+                enemyDelay = 3.5f;
             for(int i = 0; i < wave; i++)
             {
                 if (agathaHealth <= 0) break;
                 SpawnRandom();
                 yield return new WaitForSeconds(speedPotionOn ? enemyDelay * 0.66f : enemyDelay);
             }
-            float waveDelay = 6.0f - wave;
+            float waveDelay = 6.0f - ((float)wave)/3;
             if (waveDelay < 3.0f)
                 waveDelay = 3.0f;
             yield return new WaitForSeconds(speedPotionOn ? waveDelay * 0.66f : waveDelay);
@@ -171,7 +216,7 @@ public class GameManager : MonoBehaviour
 
     void UpdateScoreTxt()
     {
-        scoreTxt.text = currentScore.ToString("F1") + "\nx" + combo.ToString();
+        scoreTxt.text = currentScore.ToString("F0") + "\nx" + combo.ToString();
     }
 
     public void enemyDefeated() {
@@ -186,6 +231,10 @@ public class GameManager : MonoBehaviour
             //cleared story level
             SceneManager.LoadScene("Start");
             savedata.storyChapter++;
+            if(savedata.storyChapter > 10)
+            {
+                savedata.storyChapter = 10;
+            }
             SaveManager.SaveData();
         }
     }
