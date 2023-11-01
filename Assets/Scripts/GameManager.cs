@@ -233,7 +233,7 @@ public class GameManager : MonoBehaviour
             savedata.storyChapter++;
             if(savedata.storyChapter > 10)
             {
-                savedata.storyChapter = 10;
+                savedata.storyChapter = 1;
             }
             SaveManager.SaveData();
         }
@@ -347,18 +347,28 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(0.01f);
         }
         //then remove them
+        int[] thrownIngredients = { selectedIngredients[0], selectedIngredients[1], selectedIngredients[2] };
         foreach (Image img in selectedIngredientImages)
         {
             img.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
         }
+        selectedIngredients[0] = -1;
+        selectedIngredients[1] = -1;
+        selectedIngredients[2] = -1;
+        for (int i = 0; i < 3; i++)
+        {
+            selectedIngredientImages[i].transform.position = ogpos[i];
+        }
+        selectedCount = 0;
+        attacking = false;
         //then spawn a potion with it
         GameObject potion = Instantiate(potionPrefab, canvas.transform);
         Image potionimg = potion.GetComponent<Image>();
-        foreach(PotionCombo potionCombo in potions)
+        foreach (PotionCombo potionCombo in potions)
         {
-            if (selectedIngredients[0] == potionCombo.PotionIngredients[0] &&
-                selectedIngredients[1] == potionCombo.PotionIngredients[1] &&
-                selectedIngredients[2] == potionCombo.PotionIngredients[2])
+            if (thrownIngredients[0] == potionCombo.PotionIngredients[0] &&
+                thrownIngredients[1] == potionCombo.PotionIngredients[1] &&
+                thrownIngredients[2] == potionCombo.PotionIngredients[2])
             {
                 potionimg.sprite = potionCombo.sprite;
                 break;
@@ -374,7 +384,7 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(0.01f);
         }
         //speed potion
-        if (selectedIngredients[0] == 3 && selectedIngredients[1] == 7 && selectedIngredients[2] == 3)
+        if (thrownIngredients[0] == 3 && thrownIngredients[1] == 7 && thrownIngredients[2] == 3)
         {
             StartCoroutine(ThrowSpeedPotion());
         }
@@ -383,15 +393,6 @@ public class GameManager : MonoBehaviour
         if (enemies.Length <= 0)
         {
             Destroy(potion);
-            for (int i = 0; i < 3; i++)
-            {
-                selectedIngredientImages[i].transform.position = ogpos[i];
-            }
-            selectedIngredients[0] = -1;
-            selectedIngredients[1] = -1;
-            selectedIngredients[2] = -1;
-            selectedCount = 0;
-            attacking = false;
         }
         else
         {
@@ -415,9 +416,9 @@ public class GameManager : MonoBehaviour
                 float distance = Vector3.Distance(enemyScreenPos, potion.transform.position);
                 if (distance < 1.0)
                 {
-                    if (selectedIngredients[0] == leftMost.ingredientsWeakness[0] &&
-                        selectedIngredients[1] == leftMost.ingredientsWeakness[1] &&
-                        selectedIngredients[2] == leftMost.ingredientsWeakness[2])
+                    if (thrownIngredients[0] == leftMost.ingredientsWeakness[0] &&
+                        thrownIngredients[1] == leftMost.ingredientsWeakness[1] &&
+                        thrownIngredients[2] == leftMost.ingredientsWeakness[2])
                     {
                         leftMost.Kill();
                         combo++;
@@ -433,16 +434,6 @@ public class GameManager : MonoBehaviour
                     yield return new WaitForSeconds(0.01f);
                 }
             }
-
-            for (int i = 0; i < 3; i++)
-            {
-                selectedIngredientImages[i].transform.position = ogpos[i];
-            }
-            selectedIngredients[0] = -1;
-            selectedIngredients[1] = -1;
-            selectedIngredients[2] = -1;
-            selectedCount = 0;
-            attacking = false;
         }
     }
 }
