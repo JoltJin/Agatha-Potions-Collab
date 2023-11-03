@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
+using System.Threading;
 using TMPro;
 using Unity.Burst.CompilerServices;
 using Unity.Burst.Intrinsics;
@@ -53,7 +54,7 @@ public class GameManager : MonoBehaviour
     public int[] levelEnemyIds;
     public IngredientInfo[] ingredients; //^^ same thing but for ingredients
     public int[] levelIngredientIds;
-    public GameObject enemyPrefab;
+    public GameObject enemyPrefab, bossPrefab;
     public Image[] ingredientImages;
     public Image[] selectedIngredientImages;
     public GameObject potionPrefab;
@@ -74,6 +75,7 @@ public class GameManager : MonoBehaviour
     int combo = 0;
     bool speedPotionOn = false;
     bool storyDoneSpawn = false;
+    bool bossSpawned = false;
 
     public static bool infiniteRandomMode;
     public static double currentScore = 0.0;
@@ -226,8 +228,34 @@ public class GameManager : MonoBehaviour
         spawnedEnemies.Dequeue();
         StartCoroutine(UpdateBubble());
 
+        
+
         if(storyDoneSpawn && !infiniteRandomMode && spawnedEnemies.Count == 0)
         {
+            if (savedata.storyChapter == 10 && !bossSpawned)
+            {
+                int id = Random.Range(0, enemies.Length);
+                GameObject enemy = Instantiate(bossPrefab, new Vector3(10.5f, 1.3f, 0.0f), Quaternion.identity);
+                SpriteRenderer renderer = enemy.GetComponent<SpriteRenderer>();
+                renderer.sprite = enemies[id].sprite;
+                renderer.color = enemies[id].color;
+                Boss e = enemy.GetComponent<Boss>();
+                e.ingredientsWeakness = enemies[id].weaknessPotionIngredients;
+                e.walkAnim = enemies[id].walkAnim;
+                e.dieAnim = enemies[id].dieAnim;
+                e.fallAnim = enemies[id].fallAnim;
+                e.landAnim = enemies[id].landAnim;
+                if (speedPotionOn)
+                {
+                    e.speed *= 1.5f;
+                }
+                spawnedEnemies.Enqueue(enemy);
+                StartCoroutine(UpdateBubble());
+                bossSpawned = true;
+                e.Go();
+                return;
+            }
+
             //cleared story level
             SceneManager.LoadScene("Start");
             savedata.storyChapter++;
@@ -317,8 +345,22 @@ public class GameManager : MonoBehaviour
                 {
                     enemy.SetSpeed(newspeed);
                 }
-                yield return new WaitForSeconds(20.0f);
+
+                //wait 20s or until health changes ( took dmg )
+                float startTime = Time.time;
+                int hp = agathaHealth;
+                bool samehp = true;
+                while (samehp && Time.time - startTime < 20.0)
+                {
+                    if (hp != agathaHealth)
+                    {
+                        samehp = false;
+                    }
+                    yield return new WaitForSeconds(0.1f);
+                }
+
                 speedPotionOn = false;
+                enemies = FindObjectsOfType<Enemy>();
                 foreach (Enemy enemy in enemies)
                 {
                     enemy.SetSpeed(ogspeed);

@@ -2358,6 +2358,7 @@ MonoBehaviour:
     color: {r: 1, g: 1, b: 1, a: 1}
   levelIngredientIds: 0000000001000000020000000300000004000000050000000600000007000000
   enemyPrefab: {fileID: 1347245992235563445, guid: ae7a6e66b5e108d478d6fcd518f0a78f, type: 3}
+  bossPrefab: {fileID: 1347245992235563445, guid: 5a965be755dc5654697bea86ad24a8d0, type: 3}
   ingredientImages:
   - {fileID: 1207286142}
   - {fileID: 708948759}

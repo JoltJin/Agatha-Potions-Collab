@@ -9,10 +9,10 @@ public class Enemy : MonoBehaviour
     public Sprite[] walkAnim, dieAnim, fallAnim, landAnim;
     public float deathPosX = -4.0f, walkY = 0.5f, fallspeed = 0.1f;
 
-    Rigidbody2D rb;
-    bool dead, fell;
-    int animIndex;
-    SpriteRenderer spriteRenderer;
+    protected Rigidbody2D rb;
+    protected bool dead, fell;
+    protected int animIndex;
+    protected SpriteRenderer spriteRenderer;
 
     // Start is called before the first frame update
     void Start()
@@ -57,7 +57,7 @@ public class Enemy : MonoBehaviour
         StartCoroutine(DoWalkAnim());
     }
 
-    IEnumerator DoWalkAnim()
+    protected IEnumerator DoWalkAnim()
     {
         while (!dead)
         {
@@ -87,7 +87,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public void Kill()
+    public virtual void Kill()
     {
         StopAllCoroutines();
         dead = true;
