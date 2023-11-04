@@ -8,6 +8,7 @@ public class Enemy : MonoBehaviour
     public int[] ingredientsWeakness;
     public Sprite[] walkAnim, dieAnim, fallAnim, landAnim;
     public float deathPosX = -4.0f, walkY = 0.5f, fallspeed = 0.1f;
+    public float animDelayMult = 1.0f;
 
     protected Rigidbody2D rb;
     protected bool dead, fell;
@@ -63,7 +64,7 @@ public class Enemy : MonoBehaviour
         {
             spriteRenderer.sprite = walkAnim[animIndex++];
             animIndex %= walkAnim.Length;
-            yield return new WaitForSeconds(0.15f);
+            yield return new WaitForSeconds(0.15f * animDelayMult);
         }
     }
 
@@ -73,7 +74,7 @@ public class Enemy : MonoBehaviour
         while (animIndex < dieAnim.Length)
         {
             spriteRenderer.sprite = dieAnim[animIndex++];
-            yield return new WaitForSeconds(0.15f);
+            yield return new WaitForSeconds(0.15f * animDelayMult);
         }
         Destroy(gameObject);
     }

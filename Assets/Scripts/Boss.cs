@@ -5,6 +5,7 @@ using UnityEngine;
 public class Boss : Enemy
 {
     int hp = 3;
+    public int id;
 
     public void Go()
     {
@@ -17,6 +18,7 @@ public class Boss : Enemy
         rb.velocity = Vector3.left * speed;
         rb.position = new Vector2(rb.position.x, walkY);
         animIndex = 0;
+        animDelayMult = 2.0f;
         StartCoroutine(DoWalkAnim());
     }
 
@@ -26,6 +28,10 @@ public class Boss : Enemy
         if(hp <= 0)
         {
             base.Kill();
+        }
+        else
+        {
+            GameManager.instance.SetRandomBossID(this);
         }
     }
 }

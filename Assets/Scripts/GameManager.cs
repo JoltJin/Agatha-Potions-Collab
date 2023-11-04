@@ -245,6 +245,7 @@ public class GameManager : MonoBehaviour
                 e.dieAnim = enemies[id].dieAnim;
                 e.fallAnim = enemies[id].fallAnim;
                 e.landAnim = enemies[id].landAnim;
+                e.id = id;
                 if (speedPotionOn)
                 {
                     e.speed *= 1.5f;
@@ -265,6 +266,22 @@ public class GameManager : MonoBehaviour
             }
             SaveManager.SaveData();
         }
+    }
+
+    public void SetRandomBossID(Boss boss)
+    {
+        int id = Random.Range(0, enemies.Length);
+        while(id == boss.id)
+        {
+            id = Random.Range(0, enemies.Length);
+        }
+        boss.id = id;
+        boss.ingredientsWeakness = enemies[id].weaknessPotionIngredients;
+        boss.walkAnim = enemies[id].walkAnim;
+        boss.dieAnim = enemies[id].dieAnim;
+        boss.fallAnim = enemies[id].fallAnim;
+        boss.landAnim = enemies[id].landAnim;
+        StartCoroutine(UpdateBubble());
     }
 
     IEnumerator UpdateBubble()
