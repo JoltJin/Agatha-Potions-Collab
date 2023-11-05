@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour
     short selectedCount = 0;
     bool attacking;
     int wave = 0;
-    Queue<GameObject> spawnedEnemies = new Queue<GameObject>();
+    List<GameObject> spawnedEnemies = new List<GameObject>();
     int combo = 0;
     bool speedPotionOn = false;
     bool storyDoneSpawn = false;
@@ -166,7 +166,7 @@ public class GameManager : MonoBehaviour
         {
             e.speed *= 1.5f;
         }
-        spawnedEnemies.Enqueue(enemy);
+        spawnedEnemies.Add(enemy);
         if (spawnedEnemies.Count == 1)
         {
             StartCoroutine(UpdateBubble());
@@ -221,11 +221,11 @@ public class GameManager : MonoBehaviour
         scoreTxt.text = currentScore.ToString("F0") + "\nx" + combo.ToString();
     }
 
-    public void enemyDefeated() {
+    public void enemyDefeated(Enemy deadenemy) {
         if (agathaHealth <= 0) return;
         
         UpdateScoreTxt();
-        spawnedEnemies.Dequeue();
+        spawnedEnemies.Remove(deadenemy.gameObject);
         StartCoroutine(UpdateBubble());
 
         
@@ -250,7 +250,7 @@ public class GameManager : MonoBehaviour
                 {
                     e.speed *= 1.5f;
                 }
-                spawnedEnemies.Enqueue(enemy);
+                spawnedEnemies.Add(enemy);
                 StartCoroutine(UpdateBubble());
                 bossSpawned = true;
                 e.Go();
@@ -293,7 +293,14 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         if(spawnedEnemies.Count > 0)
         {
-            Enemy leftmost = spawnedEnemies.Peek().GetComponent<Enemy>();
+            Enemy leftmost = spawnedEnemies[0].GetComponent<Enemy>();
+            foreach(GameObject e in spawnedEnemies)
+            {
+                if(e.transform.position.x < leftmost.transform.position.x)
+                {
+                    leftmost = e.GetComponent<Enemy>();
+                }
+            }
             for (int i = 0; i < 3; i++)
             {
                 bubbleImages[i].sprite = ingredients[leftmost.ingredientsWeakness[i]].sprite;
@@ -455,31 +462,36 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Enemy leftMost = enemies[0];
-            foreach (Enemy e in enemies)
+            Array.Sort(enemies, (enemy1, enemy2) => enemy1.transform.position.x.CompareTo(enemy2.transform.position.x));
+            Enemy hitenemy = enemies[0]; //target the leftmost enemy if none are the right match
+            //check for the leftmost enemy ( cause sorted ) that matches the potion thrown, if none, keep the leftmost one for fail throw
+            foreach(Enemy e in enemies)
             {
-                if (e.transform.position.x < leftMost.transform.position.x)
+                if (thrownIngredients[0] == e.ingredientsWeakness[0] &&
+                        thrownIngredients[1] == e.ingredientsWeakness[1] &&
+                        thrownIngredients[2] == e.ingredientsWeakness[2])
                 {
-                    leftMost = e;
+                    hitenemy = e;
+                    break;
                 }
             }
             float fallspeed = 0.15f;
             while (true) //cursed but should break out of it when reached
             {
-                if (leftMost.IsDestroyed())
+                if (hitenemy.IsDestroyed())
                 {
                     Destroy(potion);
                     break; //if enemy reached agatha while potion is being thrown and is not longer valid
                 }
-                Vector3 enemyScreenPos = (leftMost.transform.position);
+                Vector3 enemyScreenPos = (hitenemy.transform.position);
                 float distance = Vector3.Distance(enemyScreenPos, potion.transform.position);
                 if (distance < 1.0)
                 {
-                    if (thrownIngredients[0] == leftMost.ingredientsWeakness[0] &&
-                        thrownIngredients[1] == leftMost.ingredientsWeakness[1] &&
-                        thrownIngredients[2] == leftMost.ingredientsWeakness[2])
+                    if (thrownIngredients[0] == hitenemy.ingredientsWeakness[0] &&
+                        thrownIngredients[1] == hitenemy.ingredientsWeakness[1] &&
+                        thrownIngredients[2] == hitenemy.ingredientsWeakness[2])
                     {
-                        leftMost.Kill();
+                        hitenemy.Kill();
                         combo++;
                         currentScore += 10.0 * Math.Log10(combo + 1) * (speedPotionOn ? 1.5f : 1.0f);
                     }
