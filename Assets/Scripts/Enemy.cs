@@ -9,6 +9,8 @@ public class Enemy : MonoBehaviour
     public Sprite[] walkAnim, dieAnim, fallAnim, landAnim;
     public float deathPosX = -4.0f, walkY = 0.5f, fallspeed = 0.1f;
     public float animDelayMult = 1.0f;
+    public float[] walkSpeed;
+    public float[] walkFrameDuration;
 
     protected Rigidbody2D rb;
     protected bool dead, fell;
@@ -62,9 +64,11 @@ public class Enemy : MonoBehaviour
     {
         while (!dead)
         {
+            int index = animIndex;
+            rb.velocity = Vector3.left * speed * walkSpeed[index];
             spriteRenderer.sprite = walkAnim[animIndex++];
             animIndex %= walkAnim.Length;
-            yield return new WaitForSeconds(0.15f * animDelayMult);
+            yield return new WaitForSeconds(0.15f * animDelayMult * walkFrameDuration[index]);
         }
     }
 

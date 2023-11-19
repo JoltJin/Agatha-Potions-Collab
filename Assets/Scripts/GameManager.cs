@@ -27,6 +27,8 @@ public struct EnemySpawnInfo
     public Color color;
     public int[] weaknessPotionIngredients;
     public Sprite[] walkAnim, dieAnim, fallAnim, landAnim;
+    public float[] walkSpeed; //speed mult for each sprite of walk anim so 1 = normal, 0.5 = half, 0 = no movement that frame
+    public float[] walkFrameDuration; //duration mult for each sprite of walk anim
 }
 
 
@@ -159,6 +161,8 @@ public class GameManager : MonoBehaviour
         Enemy e = enemy.GetComponent<Enemy>();
         e.ingredientsWeakness = enemies[id].weaknessPotionIngredients;
         e.walkAnim = enemies[id].walkAnim;
+        e.walkFrameDuration = enemies[id].walkFrameDuration;
+        e.walkSpeed = enemies[id].walkSpeed;
         e.dieAnim = enemies[id].dieAnim;
         e.fallAnim = enemies[id].fallAnim;
         e.landAnim = enemies[id].landAnim;
@@ -242,6 +246,8 @@ public class GameManager : MonoBehaviour
                 Boss e = enemy.GetComponent<Boss>();
                 e.ingredientsWeakness = enemies[id].weaknessPotionIngredients;
                 e.walkAnim = enemies[id].walkAnim;
+                e.walkSpeed = enemies[id].walkSpeed;
+                e.walkFrameDuration = enemies[id].walkFrameDuration;
                 e.dieAnim = enemies[id].dieAnim;
                 e.fallAnim = enemies[id].fallAnim;
                 e.landAnim = enemies[id].landAnim;
@@ -278,6 +284,8 @@ public class GameManager : MonoBehaviour
         boss.id = id;
         boss.ingredientsWeakness = enemies[id].weaknessPotionIngredients;
         boss.walkAnim = enemies[id].walkAnim;
+        boss.walkSpeed = enemies[id].walkSpeed;
+        boss.walkFrameDuration = enemies[id].walkFrameDuration;
         boss.dieAnim = enemies[id].dieAnim;
         boss.fallAnim = enemies[id].fallAnim;
         boss.landAnim = enemies[id].landAnim;

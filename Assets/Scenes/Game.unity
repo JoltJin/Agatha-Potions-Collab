@@ -2222,6 +2222,16 @@ MonoBehaviour:
     landAnim:
     - {fileID: 1261479284, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
     - {fileID: 1874697586, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
+    walkSpeed:
+    - 0
+    - 0.5
+    - 1
+    - 1
+    walkFrameDuration:
+    - 1
+    - 1
+    - 1
+    - 1
   - sprite: {fileID: -378962059, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
     color: {r: 1, g: 1, b: 1, a: 1}
     weaknessPotionIngredients: 030000000400000005000000
@@ -2241,6 +2251,16 @@ MonoBehaviour:
     landAnim:
     - {fileID: 809781301, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
     - {fileID: 1702593792, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
+    walkSpeed:
+    - 1
+    - 1
+    - 1
+    - 1
+    walkFrameDuration:
+    - 1
+    - 1
+    - 1
+    - 1
   - sprite: {fileID: -378962059, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
     color: {r: 1, g: 1, b: 1, a: 1}
     weaknessPotionIngredients: 050000000600000007000000
@@ -2260,6 +2280,16 @@ MonoBehaviour:
     landAnim:
     - {fileID: 2135011766, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
     - {fileID: -582839113, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
+    walkSpeed:
+    - 1
+    - 1
+    - 1
+    - 1
+    walkFrameDuration:
+    - 1
+    - 1
+    - 1
+    - 1
   - sprite: {fileID: -378962059, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
     color: {r: 1, g: 1, b: 1, a: 1}
     weaknessPotionIngredients: 020000000500000007000000
@@ -2279,6 +2309,16 @@ MonoBehaviour:
     landAnim:
     - {fileID: -1218257517, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
     - {fileID: 325003145, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
+    walkSpeed:
+    - 0.75
+    - 0
+    - 0
+    - 1.5
+    walkFrameDuration:
+    - 1
+    - 1
+    - 1
+    - 3
   - sprite: {fileID: -378962059, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
     color: {r: 1, g: 1, b: 1, a: 1}
     weaknessPotionIngredients: 010000000200000007000000
@@ -2298,6 +2338,16 @@ MonoBehaviour:
     landAnim:
     - {fileID: 1832726189, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
     - {fileID: -1278440000, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
+    walkSpeed:
+    - 0
+    - 2
+    - 0
+    - 2
+    walkFrameDuration:
+    - 2
+    - 1
+    - 2
+    - 1
   - sprite: {fileID: -378962059, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
     color: {r: 1, g: 1, b: 1, a: 1}
     weaknessPotionIngredients: 060000000400000001000000
@@ -2317,6 +2367,16 @@ MonoBehaviour:
     landAnim:
     - {fileID: -1546980818, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
     - {fileID: 931127342, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
+    walkSpeed:
+    - 0
+    - 0
+    - 2
+    - 2
+    walkFrameDuration:
+    - 1
+    - 1
+    - 2
+    - 2
   - sprite: {fileID: -378962059, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
     color: {r: 1, g: 1, b: 1, a: 1}
     weaknessPotionIngredients: 020000000600000004000000
@@ -2336,6 +2396,16 @@ MonoBehaviour:
     landAnim:
     - {fileID: -1846653356, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
     - {fileID: -37240693, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
+    walkSpeed:
+    - 2
+    - 1
+    - 0
+    - 0
+    walkFrameDuration:
+    - 1
+    - 1
+    - 1
+    - 1
   levelEnemyIds: 0000000001000000010000000000000001000000
   ingredients:
   - sprite: {fileID: -264455433, guid: 586462d9dbece244aacaa0811caddf76, type: 3}
