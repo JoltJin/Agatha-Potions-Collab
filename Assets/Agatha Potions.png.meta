@@ -2614,7 +2614,7 @@ TextureImporter:
         width: 126
         height: 51
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -2635,7 +2635,7 @@ TextureImporter:
         width: 126
         height: 57
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -2643,6 +2643,153 @@ TextureImporter:
       bones: []
       spriteID: 1359b830c6e21664c9036930951ac0c6
       internalID: 1346213780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Level Icon Purple
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 136
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5cf58260eb4a5234b86d8582e2391ca2
+      internalID: -686730506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Level Icon Yellow
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 136
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 981b2c721d53a594eba8cdd032008fd5
+      internalID: 185868993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Level Icon Light_Blue
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 120
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7da32a908c6d1eb4090fa08bd13538a2
+      internalID: 753754358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Level Icon Pink
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 112
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5fcaa4112f806c640ad68316e5f87e0a
+      internalID: -420965499
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Level Icon Blue
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 128
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2a4c0df9bc9adf743b190c025f2a32b5
+      internalID: -94446269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Level Icon Green
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 128
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2006fc01bec8be6489ce47c863c0c4b6
+      internalID: 1024528727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Level Icon Red
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 120
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 037f0fb80b7447348912689b76cce866
+      internalID: -1546723809
       vertices: []
       indices: 
       edges: []
@@ -2658,11 +2805,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Potion Yellow: 872949265
+      Health Icon Empty: -186107174
       Green Slime Dying 2: -460729375
       Thought Bubble: 1399896913
       Green Slime Falling 1: -1847913459
       Bark: -264455433
+      Level Icon Pink: -420965499
       Feather: -1324889493
       Blue Slime Dying 2: 950610450
       Pink Slime Falling 2: 627889104
@@ -2680,6 +2828,7 @@ TextureImporter:
       Pink Slime Dying 4: 2043623212
       Purple Slime Walking 3: -707680949
       Purple Slime Landing 1: 1832726189
+      Level Icon Light_Blue: 753754358
       Sprout: 424092050
       Light_Blue Slime Dying 2: -2102735321
       Title Screen Base: 58814413
@@ -2688,9 +2837,11 @@ TextureImporter:
       Yellow Slime Landing 2: -37240693
       Red Slime Landing 2: 931127342
       Blue Slime Dying 3: -1652430112
+      Level Icon Yellow: 185868993
       Pink Slime Dying 2: -223929278
       Green Slime Dying 3: -1896003023
       Potion Purple: -451083623
+      Level Icon Green: 1024528727
       Light_Blue Slime Walking 2: -828019149
       Purple Slime Dying 4: -1881002142
       Light_Blue Slime Landing 2: -582839113
@@ -2733,7 +2884,9 @@ TextureImporter:
       Red Slime Walking 2: -537339528
       Yellow Slime Dying 2: 1035090012
       Game Over: -602593377
+      Level Icon Purple: -686730506
       Falling 5: 289944562
+      Level Icon Red: -1546723809
       Agatha Portrait Background: 2693217
       Light_Blue Slime Walking 1: -396053967
       Agatha Potions_28: 1429564126
@@ -2776,9 +2929,10 @@ TextureImporter:
       Yellow Slime Dying 3: -1538406201
       HealthBackground: -1414542107
       Health Icon Full: -258039318
+      Level Icon Blue: -94446269
       Yellow Slime Walking 4: -80442725
       Yellow Slime Walking 2: -1013278079
-      Health Icon Empty: -186107174
+      Potion Yellow: 872949265
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
