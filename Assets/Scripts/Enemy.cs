@@ -51,8 +51,8 @@ public class Enemy : MonoBehaviour
         yield return new WaitForSeconds(0.15f);
         spriteRenderer.sprite = landAnim[1];
         yield return new WaitForSeconds(0.15f);
-        spriteRenderer.sprite = landAnim[0];
-        yield return new WaitForSeconds(0.15f);
+        //spriteRenderer.sprite = landAnim[0];
+        //yield return new WaitForSeconds(0.15f);
         fell = true;
         rb.velocity = Vector3.left * speed;
         rb.position = new Vector2(rb.position.x, walkY);

@@ -67,6 +67,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI scoreTxt;
     public Transform cauldronMixPoint;
     public Canvas canvas;
+    public Image[] waveImages;
 
     int agathaHealth = 6;
     int[] selectedIngredients = {-1, -1, -1}; //-1 = not selected yet
@@ -202,6 +203,10 @@ public class GameManager : MonoBehaviour
         while (true)
         {
             if (agathaHealth <= 0) break;
+            if(wave <= 13)
+            {
+                waveImages[wave].color = Color.white;
+            }
             wave++;
             print("Wave " + wave);
             float enemyDelay = 6.0f - (wave / 5.0f);
